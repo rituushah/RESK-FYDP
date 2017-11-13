@@ -1,2 +1,2 @@
 # RESK-FYDP
-Initial commit, i dont know whwat this is 
+This is for all FYDP related files 
