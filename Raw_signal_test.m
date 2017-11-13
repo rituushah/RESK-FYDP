@@ -5,7 +5,7 @@ clear all;
 %2 - Data for eliza flat knee flex and MVC 
 %3 - Cometa data 
 
-file = 2; 
+file = 3; 
 
 if file == 1 
     load('2017-10-26'); 
@@ -20,27 +20,19 @@ elseif file == 3
     fs = 4096; 
 end 
 
-%Makes the two vectors same legnth by deleting the end of Raw vector 
-% length1 = length(C1_Raw);
-% length2 = length(MVC);
-% Difference = length1 - length2;
-% number = length1 - Difference; 
-% C1_Raw = C1_Raw(1:number,:);
-
-%Make Time vector
-LMVC = length(MVC);
-x = 1/fs; 
-length = x*LMVC; 
-Time = (x:x:length); 
-Time = Time.'; 
+%Make Time vector to the length of MVC
+Time = Time_Vector(fs,MVC);
 
 %Re-assign variable names 
 C1_Raw_2 = C1_Raw; 
 C1_Raw_MVC_2 = MVC; 
 
-%Detrend the signal to get rid of DC offset 
-% C1_Raw_2 = detrend(C1_Raw_2); 
-% C1_Raw_MVC_2 = detrend(C1_Raw_MVC_2); 
+%If flexvolt data, cutting them to be same legnth and detrending 
+if file == 2
+    C1_Raw_2 = Length_Cut(C1_Raw, MVC); 
+    C1_Raw_2 = detrend(C1_Raw_2); 
+    C1_Raw_MVC_2 = detrend(C1_Raw_MVC_2); 
+end 
 
 %Gets rid of the random spikes in data 
 C1_Raw_2 = medfilt1(C1_Raw_2,3); 
@@ -48,54 +40,34 @@ C1_Filtered = C1_Raw_2;
 
 %MVC random spike filtering 
 C1_Raw_MVC_2 = medfilt1(C1_Raw_MVC_2,3); 
-C1_Filtered_MVC_2 = C1_Raw_MVC_2; 
+C1_Filtered_MVC = C1_Raw_MVC_2; 
 
 %Butterworth filter 
 Wnhigh = 400; 
 Wnlow = 20; 
-[b,a] = butter(2, [Wnlow Wnhigh]/(fs/2), 'bandpass');
+[b,a] = butter(5, [Wnlow Wnhigh]/(fs/2), 'bandpass');
 C1_Filtered = filtfilt(b,a, C1_Filtered); 
-C1_Filtered_MVC_2 = filtfilt(b,a, C1_Filtered_MVC_2); 
-
-% plot(Time, C1_Raw_2)
-% hold
-% plot(Time, C1_Filtered)
-% legend('Raw','Filtered')
-% xlabel('Time(S)')
-% ylabel ('Signal')
-% title ('Filtered Data')
+C1_Filtered_MVC = filtfilt(b,a, C1_Filtered_MVC); 
 
 %Rectification 
 C1_Filtered = abs(C1_Filtered); 
-C1_Filtered_MVC_2 = abs(C1_Filtered_MVC_2); 
+C1_Filtered_MVC = abs(C1_Filtered_MVC); 
 
-%Plotting signals
+%Plotting Rectified + Filtered signal 
 figure;
 plot(Time, C1_Filtered)
 legend('Filtered')
 xlabel('Time(S)')
 ylabel ('Signal')
-title ('Rectified Data')
+title ('Filtered and Rectified Data')
 
 %Liear envelope of EMG signal
 C1_Envelope = C1_Filtered; 
-[c,d] = butter(5, 3/(fs/2), 'low');
+[c,d] = butter(5, 1/(fs/2), 'low');
 C1_Envelope = filtfilt(c,d,C1_Envelope); 
+C1_MVC_Envelope = filtfilt(c,d,C1_Filtered_MVC); 
 
-C1_MVC_Envelope = filtfilt(c,d,C1_Filtered_MVC_2); 
-
-
-
-
-
-%Plots 
-figure
-plot(Time, C1_Envelope)
-legend('Envelope')
-xlabel('Time(S)')
-ylabel ('Signal')
-title ('Signal Envelope')
-
+%Plot signal envelope
 figure; 
 plot(Time, C1_Envelope); 
 hold
