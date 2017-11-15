@@ -46,7 +46,7 @@ C1_Filtered_MVC = C1_Raw_MVC_2;
 Wnhigh = 400; 
 Wnlow = 20; 
 [b,a] = butter(5, [Wnlow Wnhigh]/(fs/2), 'bandpass');
-C1_Filtered = filtfilt(b,a, C1_Filtered); 
+C1_Filtered = filter(b,a, C1_Filtered);
 C1_Filtered_MVC = filtfilt(b,a, C1_Filtered_MVC); 
 
 %Rectification 
@@ -64,7 +64,7 @@ title ('Filtered and Rectified Data')
 %Liear envelope of EMG signal
 C1_Envelope = C1_Filtered; 
 [c,d] = butter(5, 1/(fs/2), 'low');
-C1_Envelope = filtfilt(c,d,C1_Envelope); 
+C1_Envelope = filter(c,d,C1_Envelope);
 C1_MVC_Envelope = filtfilt(c,d,C1_Filtered_MVC); 
 
 %Plot signal envelope
