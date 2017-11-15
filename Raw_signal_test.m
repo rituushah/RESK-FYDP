@@ -5,6 +5,8 @@ clear all;
 %2 - Data for eliza flat knee flex and MVC 
 %3 - Cometa data 
 
+%TESTING 
+
 file = 3; 
 
 if file == 1 
