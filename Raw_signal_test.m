@@ -8,7 +8,7 @@ clear all;
 
 %TESTING 
 
-file = 4; 
+file = 2; 
 
 if file == 1 
     load('2017-10-26'); 
@@ -68,7 +68,7 @@ title ('Filtered and Rectified Data')
 
 %Liear envelope of EMG signal
 C1_Envelope = C1_Filtered; 
-[c,d] = butter(5, 0.5/(fs/2), 'low');
+[c,d] = butter(5, 1/(fs/2), 'low');
 C1_Envelope = filter(c,d,C1_Envelope);
 C1_MVC_Envelope = filter(c,d,C1_Filtered_MVC); 
 
@@ -84,6 +84,14 @@ title ('Exercise vs. MVC')
 
 %Find Max
 Max = Find_MVC(C1_MVC_Envelope) 
+C1_Mean = movingmean(C1_Envelope, 2000, 1, 1); 
+
+figure;
+plot(Time_Exercise, C1_Mean); 
+hold;
+plot(Time_Exercise, C1_Envelope); 
+title ('Envelope and Mean'); 
+legend('C1 Mean', 'C1 Envelope'); 
 
 MVC_flag = 8; 
 Timer = false; 
@@ -91,52 +99,45 @@ T1 = false;
 T2 = false; 
 Tlow = 0;
 Thigh = 0; 
-TlastHigh = nan;
 i = 1; 
-l1 = length(C1_Envelope); 
+l1 = length(C1_Mean); 
+time_set = 20; 
+
 
 while (i <= l1 & Timer == false)
-    value = C1_Envelope(i); 
+    value = C1_Mean(i); 
     
     if (value >= MVC_flag & T1 == false)
         Tlow = Time_Exercise(i);
         T1 = true;
     end 
     
-    if (value < MVC_flag & T1 == true && T2 == false) 
-        % if less than MVC
-        %if TlastHigh is null that means we are not in the middle of a
-        %dip, so we set the current time to tlasthigh.
-        if(isnan(TlastHigh))
-            TlastHigh = Time_Exercise(i-1);
-        end
-        %If lower than MVC for over 1.5 seconds, it counts as a fail
-        if(Time_Exercise(i) - TlastHigh >= 5)
-            Thigh = TlastHigh;
-            T2 = true; 
-            TlastHigh = nan;
-        end
-%         Thigh = Time_Exercise(i);
-%         T2 = true;
+    if (value < MVC_flag & T1 == true && T2 == false)
+        Thigh = Time_Exercise(i-1);
+        T2 = true;
     end 
     
     difference = Thigh - Tlow;
     
-    if (difference > 10)
-       disp('test') 
-       Timer = true; 
+    if (difference > time_set)
+       disp('You r successful') 
+       Timer = true;
+    elseif (T1 == true & T2 == true)
+       T1 = false;
+       T1 = false; 
+       disp('You failed') 
     end 
     
     i = i+1; 
 end 
 
 
-
-
-
-
-
-
+% result = movingmean(C1_Envelope, 2000, 1, 1); 
+% figure;
+% plot(C1_Mean)
+% hold
+% plot(C1_Envelope)
+% legend('result','envelope')
 
 
 
