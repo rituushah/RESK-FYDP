@@ -4,10 +4,11 @@ clear all;
 %1 - Data from flexvolt collected with shirley (3 pulses, no MVC)
 %2 - Data for eliza flat knee flex and MVC 
 %3 - Cometa data 
+%4 - Kassy Data
 
 %TESTING 
 
-file = 2; 
+file = 4; 
 
 if file == 1 
     load('2017-10-26'); 
@@ -20,6 +21,11 @@ elseif file == 3
     C1_Raw_MVC_2 = MVC_Quad_C1;
     C1_Raw_2 = Squat_C1;
     fs = 4096; 
+elseif file == 4
+    load ('Kassy_2017-11-16')
+    C1_Raw_MVC_2 = C1_K_MVC;
+    C1_Raw_2 = C1_K_Trial; 
+    fs = 2000; 
 end 
 
 %If flexvolt data, cutting them to be same legnth and detrending 
@@ -42,8 +48,8 @@ C1_Raw_MVC_2 = medfilt1(C1_Raw_MVC_2,3);
 C1_Filtered_MVC = C1_Raw_MVC_2; 
 
 %Butterworth filter 
-Wnhigh = 400; 
-Wnlow = 20; 
+Wnhigh = 500; 
+Wnlow = 10; 
 [b,a] = butter(5, [Wnlow Wnhigh]/(fs/2), 'bandpass');
 C1_Filtered = filter(b,a, C1_Filtered);
 C1_Filtered_MVC = filter(b,a, C1_Filtered_MVC); 
@@ -62,7 +68,7 @@ title ('Filtered and Rectified Data')
 
 %Liear envelope of EMG signal
 C1_Envelope = C1_Filtered; 
-[c,d] = butter(5, 1/(fs/2), 'low');
+[c,d] = butter(5, 0.5/(fs/2), 'low');
 C1_Envelope = filter(c,d,C1_Envelope);
 C1_MVC_Envelope = filter(c,d,C1_Filtered_MVC); 
 
