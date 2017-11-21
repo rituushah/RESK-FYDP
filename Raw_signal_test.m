@@ -1,3 +1,4 @@
+
 close all;
 clear all; 
 
@@ -102,7 +103,7 @@ Thigh = 0;
 i = 1; 
 l1 = length(C1_Mean); 
 time_set = 20; 
-
+correct = false
 
 while (i <= l1 & Timer == false)
     value = C1_Mean(i); 
@@ -122,6 +123,7 @@ while (i <= l1 & Timer == false)
     if (difference > time_set)
        disp('You r successful') 
        Timer = true;
+       correct = true;
     elseif (T1 == true & T2 == true)
        T1 = false;
        T1 = false; 
@@ -130,7 +132,7 @@ while (i <= l1 & Timer == false)
     
     i = i+1; 
 end 
-
+disp(correct) 
 
 % result = movingmean(C1_Envelope, 2000, 1, 1); 
 % figure;
