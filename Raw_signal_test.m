@@ -1,3 +1,4 @@
+
 close all;
 clear all; 
 
@@ -108,7 +109,8 @@ Tlow = 0;
 Thigh = 0; 
 i = 1; 
 l1 = length(C1_Mean); 
-time_set = 10; 
+time_set = 10;  
+correct = false;
 
 while (i <= l1 & Timer == false)
     value = C1_Mean(i); 
@@ -128,6 +130,7 @@ while (i <= l1 & Timer == false)
     if (difference > time_set)
        disp('You r successful') 
        Timer = true;
+       correct = true;
     elseif (T1 == true & T2 == true)
        counter = counter + 1; 
        Timer = true; 
@@ -138,7 +141,7 @@ while (i <= l1 & Timer == false)
     
     i = i+1; 
 end 
-
+disp(correct) 
 
 
 
