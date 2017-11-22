@@ -1,4 +1,4 @@
-function [ is_correct ] = exercise(MVC_required, time_required )
+function [ is_correct] = exercise(MVC_required, time_required )
 
 close all;
 clear all; 
@@ -71,7 +71,7 @@ C1_MVC_Envelope = filter(c,d,C1_Filtered_MVC);
 Max = Find_MVC(C1_MVC_Envelope) 
 C1_Mean = movingmean(C1_Envelope, 2000, 1, 1); 
 
-MVC_flag = 2; 
+MVC_flag = Max*(MVC_required/100); 
 Timer = false; 
 T1 = false; 
 T2 = false; 
@@ -79,8 +79,8 @@ Tlow = 0;
 Thigh = 0; 
 i = 1; 
 l1 = length(C1_Mean); 
-time_set = 2; 
-correct = false
+time_set = time_required; 
+correct = false;
 
 while (i <= l1 & Timer == false)
     value = C1_Mean(i); 
@@ -109,8 +109,9 @@ while (i <= l1 & Timer == false)
     
     i = i+1; 
 end 
-is_correct = correct
-disp('test')
+is_correct = correct;
+
+
 
 end
 

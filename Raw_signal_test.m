@@ -9,7 +9,7 @@ clear all;
 
 %TESTING 
 
-file = 1; 
+file = 2; 
 
 if file == 1 
     load('Shirley_2017-11-20'); 
@@ -17,10 +17,9 @@ if file == 1
     C1_Raw = C3_Low; 
     fs = 2000; 
 elseif file == 2
-    load('2017-11-06')
+   load('2017-11-06')
     MVC = C1_Raw_MVC_Trial2; 
-    C1_Raw = C1_Raw_2; 
-    fs = 2000; 
+    fs = 2000;
 elseif file == 3
     load('Cometa')
     C1_Raw_MVC_2 = MVC_Quad_C1;

@@ -82,7 +82,20 @@ function Record_Callback(hObject, eventdata, handles)
 MVC_required = str2double(get(handles.edit3, 'string'));
 time_required = str2double(get(handles.edit4, 'string'));
 is_correct = exercise(MVC_required, time_required);
-set(handles.is_correct,'string',is_correct);
+% is_correct_conversion = int2str(is_correct);
+% set(handles.text11,'string', is_correct_conversion);
+
+if(is_correct) == 0
+    a = imread('bad.jpg');
+    axes(handles.axes1);
+    imshow(a);
+    set(handles.text11,'string', 'Try again');
+else 
+    a = imread('good.jpg');
+    axes(handles.axes1);
+    imshow(a);
+    set(handles.text11,'string', 'Good job! You did it!');
+end
 
 end
 
@@ -199,10 +212,10 @@ C1_Envelope = filter(c,d,C1_Envelope);
 C1_MVC_Envelope = filter(c,d,C1_Filtered_MVC); 
 
 %Find Max
-Max = Find_MVC(C1_MVC_Envelope) 
+Max = Find_MVC(C1_MVC_Envelope);
 C1_Mean = movingmean(C1_Envelope, 2000, 1, 1); 
 
-MVC_flag = MVC_required; 
+MVC_flag = Max*(MVC_required/100); 
 Timer = false; 
 T1 = false; 
 T2 = false; 
@@ -211,7 +224,7 @@ Thigh = 0;
 i = 1; 
 l1 = length(C1_Mean); 
 time_set = time_required; 
-correct = false
+correct = false;
 
 while (i <= l1 & Timer == false)
     value = C1_Mean(i); 
@@ -240,20 +253,13 @@ while (i <= l1 & Timer == false)
     
     i = i+1; 
 end 
-is_correct = correct
-
+is_correct = correct;
 
 end
-
-
-
-
-
 
 function Max = Find_MVC(C1_MVC_Envelope)
     MVC_mean = movingmean(C1_MVC_Envelope, 3000, 1, 1);
     Max = max(MVC_mean);  
-
 end
 
 
