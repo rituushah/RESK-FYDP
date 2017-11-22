@@ -111,6 +111,7 @@ l1 = length(C1_Mean);
 time_set = 10;  
 correct = false;
 
+
 while (i <= l1 & Timer == false)
     value = C1_Mean(i); 
     
