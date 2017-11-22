@@ -82,7 +82,7 @@ function Record_Callback(hObject, eventdata, handles)
 
 MVC_required = str2double(get(handles.edit3, 'string'));
 time_required = str2double(get(handles.edit4, 'string'));
-[is_correct,mvc_duration] = exercise(MVC_required, time_required);
+[is_correct, = exercise(MVC_required, time_required);
 % is_correct_conversion = int2str(is_correct);
 % set(handles.text11,'string', is_correct_conversion);
 
@@ -90,12 +90,12 @@ if(is_correct) == 0
     a = imread('bad.jpg');
     axes(handles.axes1);
     imshow(a);
-    set(handles.text5,'string', floor(mvc_duration));
+    set(handles.text11,'string', 'Try again');
 else 
     a = imread('good.jpg');
     axes(handles.axes1);
     imshow(a);
-    set(handles.text5,'string', floor(mvc_duration));
+    set(handles.text11,'string', 'Good job! You did it!');
 end
 
 end

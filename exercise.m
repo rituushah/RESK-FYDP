@@ -1,23 +1,23 @@
-function [ is_correct] = exercise(MVC_required, time_required )
+function [ is_correct, mvc_duration] = exercise(MVC_required, time_required )
 
-close all;
-clear all; 
-
-%1 - Data from flexvolt collected with shirley (3 pulses, no MVC)
+%1 - Shirley data from Nov. 20th 
 %2 - Data for eliza flat knee flex and MVC 
 %3 - Cometa data 
 %4 - Kassy Data
 
 %TESTING 
 
-file = 2; 
+file = 1; 
 
 if file == 1 
-    load('2017-10-26'); 
-elseif file == 2
-    load('2017-11-06')
-    MVC = C1_Raw_MVC_Trial2; 
+    load('Shirley_2017-11-20'); 
+    MVC = C3_MVC; 
+    C1_Raw = C3_Medium; 
     fs = 2000; 
+elseif file == 2
+   load('2017-11-06')
+    MVC = C1_Raw_MVC_Trial2; 
+    fs = 2000;
 elseif file == 3
     load('Cometa')
     C1_Raw_MVC_2 = MVC_Quad_C1;
@@ -30,10 +30,9 @@ elseif file == 4
     fs = 2000; 
 end 
 
-%If flexvolt data, cutting them to be same legnth and detrending 
-if file == 2
-    C1_Raw_2 = Length_Cut(C1_Raw, MVC); 
-    C1_Raw_2 = detrend(C1_Raw_2); 
+%If flexvolt data then detrend  
+if (file == 2 | file == 1) 
+    C1_Raw_2 = detrend(C1_Raw); 
     C1_Raw_MVC_2 = detrend(MVC); 
 end 
 
@@ -60,17 +59,45 @@ C1_Filtered_MVC = filter(b,a, C1_Filtered_MVC);
 C1_Filtered = abs(C1_Filtered); 
 C1_Filtered_MVC = abs(C1_Filtered_MVC); 
 
+% %Plotting Rectified + Filtered signal 
+% figure;
+% plot(Time_Exercise, C1_Filtered)
+% legend('Filtered')
+% xlabel('Time(S)')
+% ylabel ('Signal')
+% title ('Filtered and Rectified Data')
 
 %Liear envelope of EMG signal
 C1_Envelope = C1_Filtered; 
-[c,d] = butter(5, 1/(fs/2), 'low');
+[c,d] = butter(5, 0.7/(fs/2), 'low');
 C1_Envelope = filter(c,d,C1_Envelope);
 C1_MVC_Envelope = filter(c,d,C1_Filtered_MVC); 
 
+%Plot signal 
+% figure; 
+% plot(Time_Exercise, C1_Envelope); 
+% hold
+% plot(Time_MVC, C1_MVC_Envelope); 
+% legend('Exercise Envelope','MVC Envelope')
+% xlabel('Time(S)')
+% ylabel ('Signal')
+% title ('Exercise vs. MVC')
+
 %Find Max
-Max = Find_MVC(C1_MVC_Envelope) 
+Max = Find_MVC(C1_MVC_Envelope); 
 C1_Mean = movingmean(C1_Envelope, 2000, 1, 1); 
 
+% %Plot the moving channel average versus the MVC envelope  
+% figure;
+% plot(Time_Exercise, C1_Mean); 
+% hold;
+% plot(Time_MVC, C1_MVC_Envelope); 
+% title ('Mean and MVC'); 
+% legend('Mean', 'MVC'); 
+% xlabel ('Time(S)'); 
+% ylabel ('Signal'); 
+
+counter = 0; 
 MVC_flag = Max*(MVC_required/100); 
 Timer = false; 
 T1 = false; 
@@ -79,8 +106,9 @@ Tlow = 0;
 Thigh = 0; 
 i = 1; 
 l1 = length(C1_Mean); 
-time_set = time_required; 
+time_set = time_required;  
 correct = false;
+
 
 while (i <= l1 & Timer == false)
     value = C1_Mean(i); 
@@ -98,21 +126,42 @@ while (i <= l1 & Timer == false)
     difference = Thigh - Tlow;
     
     if (difference > time_set)
-       disp('You r successful') 
        Timer = true;
        correct = true;
     elseif (T1 == true & T2 == true)
+       counter = counter + 1; 
+       Timer = true; 
        T1 = false;
-       T1 = false; 
-       disp('You failed') 
+       T2 = false; 
     end 
     
     i = i+1; 
+    is_correct = correct;
+    if (difference < 0)
+        mvc_duration = 0;
+    else 
+        mvc_duration = difference;
+    end
 end 
-is_correct = correct;
 
 
 
-end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
